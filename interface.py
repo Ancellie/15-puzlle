@@ -31,10 +31,10 @@ class Button:
 
 
 class GameWindow:
-    TILE_SIZE = 100
-    BOARD_SIZE = TILE_SIZE * 4 + 10
-    WINDOW_SIZE = (BOARD_SIZE + 120, BOARD_SIZE + 220)
-    FPS = 60
+    TILE_SIZE = 100  # Розмір одного пазла
+    BOARD_SIZE = TILE_SIZE * 4 + 10  # Розмір дошки
+    WINDOW_SIZE = (BOARD_SIZE + 120, BOARD_SIZE + 220)  # Розмір вікна
+    FPS = 60  # Кількість кадрів на секунду для оновлення графіки
 
     def create_tiles(self, board):
         tiles = []
@@ -58,70 +58,90 @@ class GameWindow:
         return tiles
 
     def __init__(self):
-        self.game  = Game(size=4)
-        self.board = self.game.puzzle
-        self.empty_row = self.game.empty_row
-        self.empty_col = self.game.empty_col
-        self.font = pygame.font.SysFont('arial', 40)
-        self.tiles = self.create_tiles(self.board)
-        self.window = pygame.display.set_mode(self.WINDOW_SIZE)
-        pygame.display.set_caption("15 Puzzle")
-        self.buttons = self.create_buttons()
+        self.game = Game(size=4)  # Створення об'єкту гри
+        self.board = self.game.puzzle  # Отримання початкової дошки гри
+        self.empty_row = self.game.empty_row  # Рядок порожньої плитки
+        self.empty_col = self.game.empty_col  # Стовпець порожньої плитки
+        self.font = pygame.font.SysFont('arial', 40)  # Шрифт для тексту на плитках
+        self.tiles = self.create_tiles(self.board)  # Створення плиток для відображення на дошці
+        self.window = pygame.display.set_mode(self.WINDOW_SIZE)  # Створення вікна гри
+        pygame.display.set_caption("15 Puzzle")  # Встановлення заголовку вікна
+        self.buttons = self.create_buttons()  # Створення кнопок
+        self.running = True  # Прапорець, що вказує, чи триває гра
+        self.solve_running = False  # Прапорець, що вказує, чи триває робота алгоритму розв'язку
 
     def new_game(self):
-        self.game = Game(size=4, shuffle_steps=100)
-        self.game.shuffle_board()
-        self.board     = self.game.puzzle
-        self.empty_row = self.game.empty_row
-        self.empty_col = self.game.empty_col
-        self.tiles = self.create_tiles(self.board)
-        self.draw_board()
+        self.game = Game(size=4, shuffle_steps=40)  # Створення нової гри з перемішаними пазлами
+        self.game.shuffle_board()  # Перемішування пазлів на дошці
+        self.board = self.game.puzzle  # Отримання нової дошки гри
+        self.empty_row = self.game.empty_row  # Оновлення рядка порожньої плитки
+        self.empty_col = self.game.empty_col  # Оновлення стовпця порожньої плитки
+        self.tiles = self.create_tiles(self.board)  # Створення плиток для відображення на дошці
+        self.draw_board()  # Оновлення відображення дошки
 
     def solve_game(self):
-        puzzle = self.game.puzzle
-        # puzzle = puzzle.shuffle()
-        #s = Solver(puzzle)
-        tic = time.perf_counter()
-        p = Solver(self.board).solve()
-        toc = time.perf_counter()
+        if self.solve_running or self.game.is_solved():  # Перевірка, чи алгоритм розв'язку вже працює
+            return
 
-        steps = 0
-        for node in p:
-            print(node.action)
-            node.puzzle.pprint()
-            steps += 1
+        def solve_algorithm():
+            self.solve_running = True  # Встановлення прапорця, що вказує на роботу алгоритму розв'язку
 
-            self.game.move(node.action)
-            pygame.display.update()
-            self.update_tiles()
-            pygame.time.wait(100)
+            tic = time.perf_counter()  # Початок відліку часу
+            p = Solver(self.board).solve()  # Запуск алгоритму розв'язку
+            toc = time.perf_counter()  # Кінець відліку часу
 
-        print("Total number of steps: " + str(steps))
-        print("Total amount of time in search: " + str(toc - tic) + " second(s)")
+            steps = 0
+            for node in p:
+                print(node.action)  # Виведення дії, зробленої алгоритмом
+                node.puzzle.pprint()  # Виведення поточного стану дошки
+                steps += 1
+
+                self.game.move(node.action)  # Застосування дії до гри
+                pygame.display.update()  # Оновлення відображення дошки
+                self.update_tiles()  # Оновлення плиток на дошці
+                pygame.time.wait(100)  # Затримка для плавності відображення
+
+            print("Загальна кількість кроків: " + str(steps))
+            print("Загальний час пошуку: " + str(toc - tic) + " секунд(и)")
+
+            self.solve_running = False  # Скидання прапорця, коли алгоритм розв'язку закінчує роботу
+
+        solve_thread = threading.Thread(target=solve_algorithm)  # Створення потоку для алгоритму розв'язку
+        solve_thread.start()  # Запуск потоку
 
     def quit_game(self):
-        self.running = False
+        self.running = False  # Зупинка гри
 
     def update_tiles(self):
-        self.board = self.game.puzzle
-        self.tiles = self.create_tiles(self.board)
-        self.empty_row = self.game.empty_row
-        self.empty_col = self.game.empty_col
-        self.draw_board()
-        pygame.display.update()
+        self.board = self.game.puzzle  # Оновлення дошки гри
+        self.tiles = self.create_tiles(self.board)  # Оновлення плиток на дошці
+        self.empty_row = self.game.empty_row  # Оновлення рядка порожньої плитки
+        self.empty_col = self.game.empty_col  # Оновлення стовпця порожньої плитки
+        self.draw_board()  # Оновлення відображення дошки
+        pygame.display.update()  # Оновлення вікна
 
     def animate_solution(self, solution):
         for move in solution:
-            self.game.move(move)
-            self.update_tiles()
-            pygame.time.wait(500)
+            self.game.move(move)  # Застосування дії до гри
+            self.update_tiles()  # Оновлення плиток на дошці
+            pygame.time.wait(500)  # Затримка для плавності відображення
 
     def draw_board(self):
-        self.window.fill((0, 150, 150))
+        self.window.fill((0, 150, 150))  # Заповнення вікна світло-синім кольором
         for tile in self.tiles:
             pygame.draw.rect(self.window, tile[2], tile[1])
             text_rect = tile[0].get_rect(center=tile[1].center)
-            self.window.blit(tile[0], text_rect)
+            self.window.blit(tile[0], text_rect)  # Відображення тексту на плитці
+
+    def moving(self, event):
+        if event.key == K_UP and not self.solve_running:
+            self.game.move("up")
+        elif event.key == K_DOWN and not self.solve_running:
+            self.game.move("down")
+        elif event.key == K_LEFT and not self.solve_running:
+            self.game.move("left")
+        elif event.key == K_RIGHT and not self.solve_running:
+            self.game.move("right")
 
     def create_buttons(self):
         buttons = []
@@ -150,23 +170,30 @@ class GameWindow:
         clock = pygame.time.Clock()
         while self.running:
             for event in pygame.event.get():
-                if event.type == QUIT:
+                if event.type == QUIT:  # Перевірка на вихід з програми
                     self.running = False
-                elif event.type == KEYDOWN:
+                if event.type == KEYDOWN:
                     self.moving(event)
-                    self.update_tiles()
-                elif not self.solve_running:
+                    self.empty_row = self.game.empty_row
+                    self.empty_col = self.game.empty_col
+                    self.board = self.game.puzzle
+                    self.tiles = self.create_tiles(self.board)
+                if not self.solve_running:  # Перевірка, чи алгоритм розв'язку не працює
                     for button in self.buttons:
-                        button.handle_event(event)
-
-            self.draw_board()
+                        button.handle_event(event)  # Обробка подій
+            self.draw_board()  # Оновлення відображення
             for button in self.buttons:
                 button.draw(self.window)
-
-            self.display_message()
-
+            if self.solve_running:
+                if not self.game.is_solved():
+                    message = pygame.font.Font(None, 48).render("Waiting...", True, (0, 0, 0))
+                    message_rect = message.get_rect(center=(self.BOARD_SIZE // 1.5, self.BOARD_SIZE + 170))
+                    self.window.blit(message, message_rect)
+            if self.game.is_solved() and not self.solve_running:
+                message = pygame.font.Font(None, 48).render("You solved the puzzle!", True, (0, 0, 0))
+                message_rect = message.get_rect(center=(self.BOARD_SIZE // 1.5, self.BOARD_SIZE + 170))
+                self.window.blit(message, message_rect)
             pygame.display.update()
-            clock.tick(self.FPS)
-
+            clock.tick(self.FPS)  # Затримка, щоб обмежити FPS
         save_board_to_file(self.board, "board.txt")
-        pygame.quit()
+        pygame.quit()  # Завершення роботи pygame
