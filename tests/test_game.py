@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch
-from game import Game, Puzzle
+from game import Game
+from solver import Puzzle
 
 class TestGame(unittest.TestCase):
 
@@ -27,6 +28,6 @@ class TestGame(unittest.TestCase):
         new_state = self.game.get_state()
         self.assertNotEqual(initial_state, new_state)
 
+
 if __name__ == '__main__':
     unittest.main()
-
