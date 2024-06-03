@@ -1,4 +1,4 @@
-**Розробив:** 
+**Розробили:** 
 *студенти 2-го курсу, групи ІМ-21:* 
 
 <span padding-right:5em></span> **Рудий Назарій** [Пошта: rudiy.nazaryi@lll.kpi.ua,  [Телеграм](https://t.me/iNazqq)]
@@ -51,28 +51,28 @@
 ## Ілюстрації
 
 <div align="center">
-  <img src="https://github.com/Ancellie/15_puzzle/images/picture1.png" alt="Початкове вікно програми">
+  <img src="https://github.com/Ancellie/15-puzlle/blob/main/images/picture1.png" alt="Початкове вікно програми">
   <p>Рисунок 1.1 — Початкове вікно програми</p>
 </div>
 
 Натиснувши кнопку “New Game”, дошка з плитками переміститься 1000 раз у випадкових напрямках(рисунок 1.2)
  
 <div align="center">
-  <img src="https://github.com/Ancellie/15_puzzle/images/picture2.png" alt="Вікно програми після натискання кнопки “New Game”">
+  <img src="https://github.com/Ancellie/15-puzlle/blob/main/images/picture2.png" alt="Вікно програми після натискання кнопки “New Game”">
   <p>Рисунок 1.2 — Вікно програми після натискання кнопки “New Game”</p>
 </div>
 
 Якщо нажати кнопку “Solve”, то запуститься алгоритм пошуку шляху, для вирішення гри(рисунок 1.3)
 
 <div align="center">
-  <img src="https://github.com/Ancellie/15_puzzle/images/picture3.png" alt="Алгоритм запущений">
+  <img src="https://github.com/Ancellie/15-puzlle/blob/main/images/picture3.png" alt="Алгоритм запущений">
   <p>Рисунок 1.3 — Алгоритм запущений</p>
 </div>
 
 Після того, як алгоритм знайшов шлях, гра починається автоматично розв'язуватись, з анімацією переміщення плиток, поки не виконає всі потрібні ходи, і гра буде у розв'язаній конфігурації(рисунок 1.4)
 
 <div align="center">
-  <img src=""https://github.com/Ancellie/15_puzzle/images/picture4.png" alt="Гра була розв'язана">
+  <img src="https://github.com/Ancellie/15-puzlle/blob/main/images/picture4.png" alt="Гра була розв'язана">
   <p>Рисунок 1.4 — Гра була розв'язана</p>
 </div>
 
